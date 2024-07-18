@@ -1,0 +1,24 @@
+[
+    {
+        "Code": "SPXD",
+        "Exchange": "LSE",
+        "Name": "Invesco S&P 500 UCITS B Dis",
+        "Type": "ETF",
+        "Country": "UK",
+        "Currency": "USD",
+        "ISIN": "IE00BYML9W36",
+        "previousClose": 51.05,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "SPXD",
+        "Exchange": "SW",
+        "Name": "Invesco S&P 500 UCITS ETF (Dist)",
+        "Type": "ETF",
+        "Country": "Switzerland",
+        "Currency": "USD",
+        "ISIN": "IE00BYML9W36",
+        "previousClose": 51.03,
+        "previousCloseDate": "2024-06-28"
+    }
+]

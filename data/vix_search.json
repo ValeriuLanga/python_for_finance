@@ -1,0 +1,167 @@
+[
+    {
+        "Code": "VIX",
+        "Exchange": "VN",
+        "Name": "VIX Securities JSC",
+        "Type": "Common Stock",
+        "Country": "Vietnam",
+        "Currency": "VND",
+        "ISIN": "VN000000VIX5",
+        "previousClose": 16800,
+        "previousCloseDate": "2024-06-27"
+    },
+    {
+        "Code": "VIXY",
+        "Exchange": "US",
+        "Name": "ProShares VIX Short-Term Futures ETF",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US74347Y8545",
+        "previousClose": 10.85,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VIXL",
+        "Exchange": "F",
+        "Name": "S&P 500 VIX Short-term Futures Index",
+        "Type": "ETF",
+        "Country": "Germany",
+        "Currency": "EUR",
+        "ISIN": None,
+        "previousClose": 0.0068,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VIXM",
+        "Exchange": "US",
+        "Name": "ProShares VIX Mid-Term Futures ETF",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US74347W3381",
+        "previousClose": 14.33,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VIXL",
+        "Exchange": "LSE",
+        "Name": "S&P 500 VIX Short-term Futures Index (0930-1600 EST)",
+        "Type": "ETF",
+        "Country": "UK",
+        "Currency": "USD",
+        "ISIN": "IE00BLRPRH06",
+        "previousClose": 0.0073,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VIXL",
+        "Exchange": "XETRA",
+        "Name": "S&P 500 VIX Short-term Futures Index (0930-1600 EST) EUR",
+        "Type": "ETF",
+        "Country": "Germany",
+        "Currency": "EUR",
+        "ISIN": "IE00BLRPRH06",
+        "previousClose": 0.0074,
+        "previousCloseDate": "2024-06-19"
+    },
+    {
+        "Code": "UVXY",
+        "Exchange": "US",
+        "Name": "ProShares Ultra VIX Short-Term Futures ETF",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US74347Y8396",
+        "previousClose": 23.54,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VXX",
+        "Exchange": "US",
+        "Name": "iPath® Series B S&P 500® VIX Short-Term Futures ETN",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US06748F3249",
+        "previousClose": 10.92,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "SVXY",
+        "Exchange": "US",
+        "Name": "ProShares Short VIX Short-Term Futures ETF",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US74347W1302",
+        "previousClose": 61.39,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "UVIX",
+        "Exchange": "US",
+        "Name": "2x Long VIX Futures ETF",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US92891H3093",
+        "previousClose": 5.6,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "SVIX",
+        "Exchange": "US",
+        "Name": "-1x Short VIX Futures ETF",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US92891H1014",
+        "previousClose": 47.67,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VILX",
+        "Exchange": "LSE",
+        "Name": "S&P 500 VIX Short-term Futures Index (0930-1600 EST)",
+        "Type": "ETF",
+        "Country": "UK",
+        "Currency": "GBX",
+        "ISIN": "IE00BYTYHQ58",
+        "previousClose": 0.575,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "HUV",
+        "Exchange": "TO",
+        "Name": "BetaPro S&P 500 VIX Short-Term Futures ETF",
+        "Type": "ETF",
+        "Country": "Canada",
+        "Currency": "CAD",
+        "ISIN": "CA08664B1058",
+        "previousClose": 7.72,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VOOL",
+        "Exchange": "XETRA",
+        "Name": "Lyxor S&P 500 VIX Futures Enhanced Roll UCITS ETF - C-EUR",
+        "Type": "ETF",
+        "Country": "Germany",
+        "Currency": "EUR",
+        "ISIN": "LU0832435464",
+        "previousClose": 1.0956,
+        "previousCloseDate": "2024-06-28"
+    },
+    {
+        "Code": "VXZ",
+        "Exchange": "US",
+        "Name": "iPath® Series B S&P 500® VIX Mid-Term Futures ETN",
+        "Type": "ETF",
+        "Country": "USA",
+        "Currency": "USD",
+        "ISIN": "US06746P6135",
+        "previousClose": 12.43,
+        "previousCloseDate": "2024-06-28"
+    }
+]
