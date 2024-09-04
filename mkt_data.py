@@ -7,9 +7,13 @@ def load_api_key() -> dict:
     
     return cdp_api_key
 
-symbol = 'MSFT'
+# change these to load data
+symbol = 'SPX.LSE'
+frm = '2024-01-02'
+to = '2024-09-03'
+
 api_key = load_api_key()['key']
-url = f'https://eodhd.com/api/eod/{symbol}?from=2023-07-07&to=2024-01-01&period=d&api_token={api_key}&fmt=json'
+url = f'https://eodhd.com/api/eod/{symbol}?from={frm}&to={to}&period=d&api_token={api_key}&fmt=json'
 # url = f'https://eodhd.com/api/exchanges-list/?api_token={api_key}&fmt=json'
 
 # use this to search by isin / ticker
