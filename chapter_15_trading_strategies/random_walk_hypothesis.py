@@ -15,13 +15,17 @@ data = data.rename({'close' : symbol}, axis=1)
 # print(data)
 
 lags = 5
-def create_lags(data):
+def create_lags(data, use_returns=False):
     global cols
     cols = [] 
 
     for lag in range(1, lags + 1):
         col = "lag_{}".format(lag)
-        data[col] = data[symbol].shift(lag)
+        if not use_returns:
+            data[col] = data[symbol].shift(lag)
+        else:
+            data[col] = data['returns'].shift(lag)
+
         cols.append(col)
 
 create_lags(data)
@@ -76,12 +80,13 @@ date
 """
 # switch to ln returns from price
 lags = 2
-for lag in range(1, lags + 1):
-    col = "lag_{}".format(lag)
+create_lags(data, True)
+# for lag in range(1, lags + 1):
+#     col = "lag_{}".format(lag)
 
-    # shift ln returns by lag
-    data[col] = data['returns'].shift(lag)
-    cols.append(col)
+#     # shift ln returns by lag
+#     data[col] = data['returns'].shift(lag)
+#     cols.append(col)
 
 data = data.dropna()
 # data.plot.scatter(x='lag_1', y='lag_2', c='returns', cmap='coolwarm', figsize=(10, 6), colorbar=True)
@@ -219,7 +224,7 @@ def create_bins(data, bins=[0]):
     for col in cols:
         col_bin = col + '_bin'
         data[col_bin] = np.digitize(data[col], bins=bins)
-        
+
         cols_bin.append(col_bin)
 
 create_bins(data)
@@ -370,17 +375,23 @@ data['returns'] = np.log(data / data.shift(1))
 data['direction'] = np.sign(data['returns'])
 
 lags = 5  
-create_lags(data)
+create_lags(data, True)
 data = data.dropna()
 
 create_bins(data)
 data = data.dropna()
-print(data)
+# print(data)
 
-# fit_models(data)
-# derive_positions(data)
-# evaluate_strats(data)
+fit_models(data)
+derive_positions(data)
+evaluate_strats(data)
 
-# print(data[sel].sum().apply(np.exp))
-# data[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
-# plt.show()
+print(data[sel].sum().apply(np.exp))
+"""
+returns           0.775510
+strat_log_reg     1.908406
+strat_gauss_nb    2.152262
+strat_svm         2.864895
+"""
+data[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
+plt.show()
