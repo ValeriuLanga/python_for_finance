@@ -436,7 +436,7 @@ strat_svm         3.478070  <- compare vs 5 binary features
 # plt.show()
 
 
-########################
+##########################
 # Classification - Sequential train-test split
 # ########################
 
@@ -459,7 +459,7 @@ strat_svm         0.985840  <- this is doing much worse compared to before
 # plt.show()
 
 
-########################
+##########################
 # Classification - Randomized train-test split
 # ########################
 
@@ -490,7 +490,59 @@ fit_models(train)
 derive_positions(test)
 evaluate_strats(test)
 
-print(data[sel].sum().apply(np.exp))
-test[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
-plt.show()
+# print(data[sel].sum().apply(np.exp))
+"""
+returns           0.775510
+strat_log_reg     1.886991
+strat_gauss_nb    2.263816
+strat_svm         3.478070      <- exceptionally well on randomized data instead of sequential; should expand the data set as I'm guessing it's smth to do w that
+"""
+# test[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
+# plt.show()
 
+
+##########################
+# Deep Neural Networks
+# ########################
+
+from sklearn.neural_network import MLPClassifier
+model = MLPClassifier(solver='lbfgs', 
+                      alpha=1e-5,
+                      hidden_layer_sizes=2 * [250],
+                      random_state=1)
+
+model.fit(data[cols_bin], data['direction'])
+data['pos_dnn_sk'] = model.predict(data[cols_bin])
+data['strat_dnn_sk'] = data['pos_dnn_sk'] * data['returns']
+
+# print(data[['returns', 'strat_dnn_sk']].sum().apply(np.exp))
+"""
+returns           0.775510
+strat_dnn_sk    11.949675  <- overfitting obv
+"""
+# data[['returns', 'strat_dnn_sk']].cumsum().apply(np.exp).plot(figsize=(10,6))
+# plt.show()
+
+
+# let's get more realistic
+train, test = train_test_split(data, test_size=0.5, random_state=100)
+train = train.copy().sort_index()
+test = test.copy().sort_index()
+
+model = MLPClassifier(solver='lbfgs', 
+                      alpha=1e-5,
+                      max_iter=500,
+                      hidden_layer_sizes=3 * [500],
+                      random_state=1)
+model.fit(train[cols_bin], train['direction'])
+
+test['pos_dnn_sk'] = model.predict(test[cols_bin])
+test['strat_dnn_sk'] = test['pos_dnn_sk'] * test['returns']
+
+print(test[['returns', 'strat_dnn_sk']].sum().apply(np.exp))
+"""
+returns         1.022384
+strat_dnn_sk    1.237390    <- more realistic on randomized train-test split
+"""
+test[['returns', 'strat_dnn_sk']].cumsum().apply(np.exp).plot(figsize=(10,6))
+plt.show()
