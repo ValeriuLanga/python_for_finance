@@ -386,12 +386,111 @@ fit_models(data)
 derive_positions(data)
 evaluate_strats(data)
 
-print(data[sel].sum().apply(np.exp))
+# print(data[sel].sum().apply(np.exp))
 """
 returns           0.775510
 strat_log_reg     1.908406
 strat_gauss_nb    2.152262
 strat_svm         2.864895
 """
-data[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
+# data[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
+# plt.show()
+
+
+########################
+# Classification - 5 digitized features
+########################
+
+mu = data['returns'].mean() # mean
+v = data['returns'].std()   # std deviation
+
+bins = [mu - v, mu, mu + v] # 3 bins - +- std dev of the returns mean
+# print(bins)
+
+create_bins(data, bins)
+# print(data[cols_bin])
+"""
+[-0.01778744059235073, -0.0010292880096528, 0.01572886457304513]
+            lag_1_bin  lag_2_bin  lag_3_bin  lag_4_bin  lag_5_bin
+date
+2023-09-13          1          1          2          1          2
+2023-09-14          1          1          1          2          1
+2023-09-15          2          1          1          1          2
+2023-09-18          2          2          1          1          1
+2023-09-19          1          2          2          1          1
+"""
+
+fit_models(data)
+derive_positions(data)
+evaluate_strats(data)
+
+# print(data[sel].sum().apply(np.exp))
+"""
+returns           0.775510
+strat_log_reg     1.886991
+strat_gauss_nb    2.263816
+strat_svm         3.478070  <- compare vs 5 binary features 
+"""
+
+# data[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
+# plt.show()
+
+
+########################
+# Classification - Sequential train-test split
+# ########################
+
+split = int(len(data) * 0.5)
+train = data.iloc[:split].copy()    # train on first half
+fit_models(train)
+
+test = data.iloc[split:].copy() # test on second half
+derive_positions(test)
+evaluate_strats(test)
+
+# print(test[sel].sum().apply(np.exp))
+"""
+returns           0.740019
+strat_log_reg     1.524713
+strat_gauss_nb    1.356010
+strat_svm         0.985840  <- this is doing much worse compared to before
+"""
+# test[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
+# plt.show()
+
+
+########################
+# Classification - Randomized train-test split
+# ########################
+
+from sklearn.model_selection import train_test_split
+
+train, test = train_test_split(data, test_size=0.5, shuffle=True, random_state=100)
+
+
+train = train.copy().sort_index()
+test = test.copy().sort_index()
+# print(train.index)
+"""
+DatetimeIndex(['2023-09-13', '2023-09-15', '2023-09-19', '2023-09-20',
+               '2023-09-21', '2023-09-25', '2023-09-26', '2023-09-29',
+               '2023-10-02', '2023-10-03',
+"""
+# print(test.index)
+"""
+DatetimeIndex(['2023-09-14', '2023-09-18', '2023-09-22', '2023-09-27',
+               '2023-09-28', '2023-10-04', '2023-10-10', '2023-10-11',
+               '2023-10-13', '2023-10-16',
+
+!! notice the random selection of dates from the initial data set
+"""
+
+fit_models(train)
+
+derive_positions(test)
+evaluate_strats(test)
+
+print(data[sel].sum().apply(np.exp))
+test[sel].cumsum().apply(np.exp).plot(figsize=(10,6))
 plt.show()
+
