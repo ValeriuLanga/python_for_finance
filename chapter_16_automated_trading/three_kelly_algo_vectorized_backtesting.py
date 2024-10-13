@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from pylab import plt
+import scipy.stats as scs
+
 
 data = pd.read_csv("E:\\coding\\python_for_finance\\data\\fxcm_eur_usd_eod_data.csv")
 data['Date'] = pd.to_datetime(data['Date'])
@@ -111,16 +113,16 @@ mean = test[['returns', 'strategy_tc']].mean() * len(data) # * 12   # we're alre
 print(mean)
 
 var = test[['returns', 'strategy_tc']].var() * len(data) # * 12   # we're already looking at one year worth's
-print(var)
+# print(var)
 
 vol = var ** 0.5    # annualised volatility
-print(vol)
+# print(vol)
 
 optimal_leverage = mean / var
-print(optimal_leverage)
+# print(optimal_leverage)
 
 optimal_leverage_half = optimal_leverage * 0.5
-print(optimal_leverage_half)
+# print(optimal_leverage_half)
 """
 returns        10.518406
 strategy_tc    31.035424
@@ -133,9 +135,9 @@ for level in [10, 20, 30, 40, 50]:
 
     to_plot.append(label)
 
-# show the performance of the trading strategy w txn costs for different leverage values
-test[to_plot].cumsum().apply(np.exp).plot(figsize=(10,6))
-plt.show()
+# # show the performance of the trading strategy w txn costs for different leverage values
+# test[to_plot].cumsum().apply(np.exp).plot(figsize=(10,6))
+# plt.show()
 
 
 # now let's do some risk analysis
@@ -143,7 +145,112 @@ plt.show()
 # largest drawdon period - longest period that the trading system needs to get back to a recent high
 
 # we make some assumptions - initial position is 33k and the leverage ratio is 30 (as proven by the optimal 1/2 leverage)
+equity = 3_333
+risk = pd.DataFrame(test['lstrategy_tc_30'])    # log returns for 30 leverage ratio
+risk['equity'] = risk['lstrategy_tc_30'].cumsum().apply(np.exp) * equity    # scale returns by initial equity
+
+risk['cummax'] = risk['equity'].cummax()    # cummulative max values
+risk['drawdown'] = risk['cummax'] - risk['equity'] # drawdown values over time
+
+# print(risk)
+"""
+                     lstrategy_tc_30        equity        cummax     drawdown
+Date
+2017-10-18 21:00:00         0.156636   3898.174645   3898.174645     0.000000
+2017-10-19 21:00:00         0.176748   4651.810681   4651.810681     0.000000
+2017-10-21 21:00:00         0.038098   4832.454571   4832.454571     0.000000
+2017-10-22 21:00:00        -0.047000   4610.584142   4832.454571   221.870429   <-- basically the delta between max px and current px
+2017-10-23 21:00:00         0.032155   4761.244951   4832.454571    71.209620
+"""
+
+# print(risk['drawdown'].max())  # maxim global drawdown value (i.e. biggest dip)
+t_max = risk['drawdown'].idxmax()   # when do we see the biggest drawdown
+# print(t_max)
+"""
+11780.166721343003
+2017-12-13 22:00:00
+"""
+
+"""
+A new high <=> a drawdown value of 0
+The drawdown period <=> the period between two such high
+"""
+temp = risk['drawdown'][risk['drawdown'] == 0]  # select only high point resets
+periods = (temp.index[1:].to_pydatetime() - temp.index[:1].to_pydatetime())
+# print(periods)
+"""
+[datetime.timedelta(days=1) datetime.timedelta(days=3)
+ datetime.timedelta(days=6) datetime.timedelta(days=7)
+ datetime.timedelta(days=8) datetime.timedelta(days=11)
+ datetime.timedelta(days=12) datetime.timedelta(days=13)
+ ...]
+"""
+t_per = periods.max()
+# print(t_per)      # max drawdown period
+"""
+34 days, 1:00:00
+"""
+
+# risk[['equity', 'cummax']].plot(figsize=(10,6)) # equity vs cummax
+# plt.axvline(t_max, c='r', alpha=0.5)    # mark the point of the biggest dip vs prev high
+# plt.show()
+
+#
+#   Value at Risk (VaR)
+#
+# VaR is quoted as ccy ammount and represents the max loss to be expected given
+# both a certain time horizon and a confidence level
+percs = np.array([0.01, 0.1, 1., 2.5, 5.0, 10.0]) # precentile vals to be used
+risk['returns'] = np.log(risk['equity'] / risk['equity'].shift(1))    # go to ln rets
+VaR = scs.scoreatpercentile(equity * risk['returns'], percs)    # VaR given percentile values
+# print(VaR)
+"""
+[-738.18412507 -735.83610588 -712.35591398 -629.81983659 -515.55375466
+ -336.37495872]
+"""
+
+def print_VaR():
+    print('%16s %16s' % ('Confidence Level', 'Value-at-Risk'))
+    print(33 * '-')
+    for pair in zip(percs, VaR):
+        print('%16.2f %16.3f' % (100 - pair[0], -pair[1]))
+        # translate percentile values into confidence levels i.e. 100 - percentile
+        # translate VaR into a positive (it will be negative)
+
+# print_VaR()
+"""
+Confidence Level    Value-at-Risk
+---------------------------------
+           99.99          738.184
+           99.90          735.836
+           99.00          712.356
+           97.50          629.820
+           95.00          515.554
+           90.00          336.375
+"""
+
+# calculate VaR for time horizon of 1h by resampling the original DataFrame
+# Node: we resample to 2D instead of 1D since 1D is our market data's frequency; in the book, the orig freq is 5m
+hourly = risk.resample('2D', label='right').last()  
+hourly['returns'] = np.log(hourly['equity'] / hourly['equity'].shift(1))
+
+VaR = scs.scoreatpercentile(equity * hourly['returns'], percs)
+print_VaR()
+"""
+Confidence Level    Value-at-Risk
+---------------------------------
+           99.99          990.560
+           99.90          980.680
+           99.00          881.881
+           97.50          717.215
+           95.00          492.591
+           90.00          326.837   <- worth noting that all values got worse with a bigger resample
+
+"""
 
 
+# we can now persist the model for later use
+import pickle
+pickle.dump(model, open('algorithm.pkl', 'wb')) 
 
 
