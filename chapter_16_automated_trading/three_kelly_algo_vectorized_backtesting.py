@@ -26,7 +26,7 @@ Date
 """
 
 # take just one year
-# data = data.loc['2016-12-31' : '2017-12-31']
+data = data.loc['2016-12-31' : '2017-12-31']
 # print(data)
 """
                      bidopen  bidhigh   bidlow  bidclose  askopen  askhigh   asklow  askclose
@@ -102,8 +102,48 @@ strategy       1.062737
 strategy_tc    1.054039 <- still beating the benchmark
 """
 
-test[['returns', 'strategy', 'strategy_tc']].cumsum().apply(np.exp).plot(figsize=(10, 6))
+# test[['returns', 'strategy', 'strategy_tc']].cumsum().apply(np.exp).plot(figsize=(10, 6))
+# plt.show()
+
+
+# let's calculate the optimal leverage acc to Kelly's crit now
+mean = test[['returns', 'strategy_tc']].mean() * len(data) # * 12   # we're already looking at one year worth's
+print(mean)
+
+var = test[['returns', 'strategy_tc']].var() * len(data) # * 12   # we're already looking at one year worth's
+print(var)
+
+vol = var ** 0.5    # annualised volatility
+print(vol)
+
+optimal_leverage = mean / var
+print(optimal_leverage)
+
+optimal_leverage_half = optimal_leverage * 0.5
+print(optimal_leverage_half)
+"""
+returns        10.518406
+strategy_tc    31.035424
+"""
+
+to_plot = ['returns', 'strategy_tc']
+for level in [10, 20, 30, 40, 50]:
+    label = 'lstrategy_tc_{}'.format(level)
+    test[label] = test['strategy_tc'] * level # scale strategy on diff levels
+
+    to_plot.append(label)
+
+# show the performance of the trading strategy w txn costs for different leverage values
+test[to_plot].cumsum().apply(np.exp).plot(figsize=(10,6))
 plt.show()
+
+
+# now let's do some risk analysis
+# maximum drawdown - largest loss (dip) after a recent high
+# largest drawdon period - longest period that the trading system needs to get back to a recent high
+
+# we make some assumptions - initial position is 33k and the leverage ratio is 30 (as proven by the optimal 1/2 leverage)
+
 
 
 

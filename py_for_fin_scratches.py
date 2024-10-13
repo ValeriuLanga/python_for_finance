@@ -197,7 +197,38 @@ def dummy_perf(f, param=None):
             f(param)
     print(timeit.default_timer() - start_time)
 
+
+def merge(left, right):
+    """Merge two sorted lists into one sorted list."""
+    merged = []
+    i = j = 0
+    # Merge the two lists into merged[]
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+    # Append any remaining elements
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+    return merged
+
+def iterative_merge_sort(arr):
+    """Sort the array using iterative (non-recursive) merge sort."""
+    width = 1
+    n = len(arr)
+    while width < n:
+        for i in range(0, n, 2 * width):
+            left = arr[i : i + width]
+            right = arr[i + width : i + 2 * width]
+            arr[i : i + 2 * width] = merge(left, right)
+        width *= 2
+    return arr
+
+print(iterative_merge_sort([2,4,5,63,3,654,74,32,423,546]))
 # chapter_one()
 # chapter_two()
 # vectorization()
-memory_layout()
+# memory_layout()
