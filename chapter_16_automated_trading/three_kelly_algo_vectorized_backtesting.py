@@ -253,4 +253,3 @@ Confidence Level    Value-at-Risk
 import pickle
 pickle.dump(model, open('algorithm.pkl', 'wb')) 
 
-
